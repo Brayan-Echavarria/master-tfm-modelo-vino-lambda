@@ -45,7 +45,7 @@ jobs:
 
       - name: Upload Lambda function to S3
         run: |
-          aws s3 cp lambda_function.zip s3://${{ steps.read-config.outputs.bucket_name }}/{{ steps.read-config.outputs.s3_key }}
+          aws s3 cp lambda_function.zip s3://${{ steps.read-config.outputs.bucket_name }}/${{ steps.read-config.outputs.s3_key }}
 
       - name: Update Lambda function code
         run: |
