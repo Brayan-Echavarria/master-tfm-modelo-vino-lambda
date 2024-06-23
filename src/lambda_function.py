@@ -1,6 +1,6 @@
 import json
-import numpy as np
 import joblib
+import numpy as np
 
 model = joblib.load("/var/task/sklearn_model.joblib")
 
