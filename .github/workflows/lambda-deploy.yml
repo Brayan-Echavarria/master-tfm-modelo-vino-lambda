@@ -41,7 +41,7 @@ jobs:
       - name: Package Lambda function
         run: |
           mkdir -p package/python
-          cp -r venv/lib/python3.8/site-packages/* package/python/
+          cp -r venv/lib/python3.9/site-packages/* package/python/
           cp src/*.py package/
           cp src/sklearn_model.joblib package/
           cd package
