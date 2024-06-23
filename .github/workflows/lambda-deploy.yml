@@ -31,11 +31,32 @@ jobs:
           echo "::set-output name=lambda_function_name::$(echo $config | jq -r .environment.lambda_function_name)"
           echo "::set-output name=s3_key::$(echo $config | jq -r .environment.s3_key)"
 
-      - name: Deploy to AWS Lambda
-        uses: qubitro/action-lambda-python-zip@v1.0
+      - name: Package Lambda function
+        run: |
+          mkdir -p package
+          cp src/lambda_function.py package/
+          cp src/sklearn_model.joblib package/
+          pip install --upgrade pip
+          pip install --target ./package -r src/requirements.txt
+          cd package
+          zip -r ../lambda_function.zip .
+          cd ..
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          lambda_function_name: ${{ steps.read-config.outputs.lambda_function_name }}
-          lambda_region: ${{ steps.read-config.outputs.region }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ steps.read-config.outputs.region }}
+
+      - name: Upload Lambda function to S3
+        run: |
+          aws s3 cp lambda_function.zip s3://${{ steps.read-config.outputs.bucket_name }}/${{ steps.read-config.outputs.s3_key }}
+
+      - name: Update Lambda function code
+        run: |
+          aws lambda update-function-code --function-name ${{ steps.read-config.outputs.lambda_function_name }} --s3-bucket ${{ steps.read-config.outputs.bucket_name }} --s3-key ${{ steps.read-config.outputs.s3_key }}
+
+      - name: Clean up
+        run: |
+          rm -rf package lambda_function.zip
