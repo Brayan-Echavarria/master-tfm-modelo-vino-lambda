@@ -31,21 +31,17 @@ jobs:
           echo "::set-output name=lambda_function_name::$(echo $config | jq -r .environment.lambda_function_name)"
           echo "::set-output name=s3_key::$(echo $config | jq -r .environment.s3_key)"
 
-      - name: Set up the virtual environment
+      - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
           pip install --upgrade pip
-          pip install -r src/requirements.txt
+          pip install --target ./package/python -r src/requirements.txt
 
       - name: Package Lambda function
         run: |
-          mkdir -p package/python
-          cp -r venv/lib/python3.9/site-packages/* package/python/
           cp src/*.py package/
           cp src/sklearn_model.joblib package/
           cd package
-          zip -r ../lambda_function.zip .
+          zip -r9 ../lambda_function.zip .
           cd ..
 
       - name: Configure AWS credentials
@@ -65,4 +61,4 @@ jobs:
 
       - name: Clean up
         run: |
-          rm -rf venv lambda_function.zip package
+          rm -rf package lambda_function.zip
