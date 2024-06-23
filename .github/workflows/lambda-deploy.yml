@@ -32,11 +32,10 @@ jobs:
           echo "::set-output name=s3_key::$(echo $config | jq -r .environment.s3_key)"
 
       - name: Deploy to AWS Lambda
-        uses: arseniyr/aws-lambda-zip-deploy-python@v0.4.4
+        uses: qubitro/action-lambda-python-zip@v1.0
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ steps.read-config.outputs.region }}
-          function_name: ${{ steps.read-config.outputs.lambda_function_name }}
-          source_dir: src
-          requirements: src/requirements.txt
+          lambda_function_name: ${{ steps.read-config.outputs.lambda_function_name }}
+          lambda_region: ${{ steps.read-config.outputs.region }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
