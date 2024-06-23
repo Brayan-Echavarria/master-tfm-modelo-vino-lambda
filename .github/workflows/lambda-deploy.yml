@@ -34,10 +34,9 @@ jobs:
       - name: Package Lambda function
         run: |
           mkdir -p package
-          cp src/lambda_function.py package/
-          cp src/sklearn_model.joblib package/
+          cp -r src/* package/
           pip install --upgrade pip
-          pip install --target ./package -r src/requirements.txt
+          pip install --target ./package -r requirements.txt
           cd package
           zip -r ../lambda_function.zip .
           cd ..
