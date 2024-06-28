@@ -42,6 +42,7 @@ jobs:
         run: |
           cd src
           python -m unittest discover tests
+          cd ..
 
       - name: Package Lambda function
         run: |
