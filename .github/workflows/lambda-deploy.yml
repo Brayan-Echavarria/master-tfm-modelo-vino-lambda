@@ -40,7 +40,9 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/src
         run: |
-          python -m unittest discover src/tests
+          cd src
+          python -m unittest discover tests
+          cd ..
 
       - name: Package Lambda function
         run: |

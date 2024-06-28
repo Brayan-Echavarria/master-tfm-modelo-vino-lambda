@@ -9,7 +9,7 @@ model = joblib.load(model_path)
 
 def lambda_handler(event, context):
     try:
-
+    
         # Extraer los parámetros de entrada del evento
         params_list = json.loads(event['body'])
 
