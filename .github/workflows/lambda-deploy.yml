@@ -31,6 +31,15 @@ jobs:
           echo "::set-output name=lambda_function_name::$(echo $config | jq -r .environment.lambda_function_name)"
           echo "::set-output name=s3_key::$(echo $config | jq -r .environment.s3_key)"
 
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install unittest
+
+      - name: Run tests
+        run: python -m unittest discover src/tests
+
       - name: Package Lambda function
         run: |
           mkdir -p package
