@@ -3,11 +3,12 @@ import joblib
 import numpy as np
 import os
 
+# Obtener la ruta del modelo desde una variable de entorno
+model_path = os.getenv('MODEL_PATH', './sklearn_model.joblib')
+model = joblib.load(model_path)
+
 def lambda_handler(event, context):
     try:
-        # Obtener la ruta del modelo desde una variable de entorno
-        model_path = os.getenv('MODEL_PATH', './sklearn_model.joblib')
-        model = joblib.load(model_path)
 
         # Extraer los parámetros de entrada del evento
         params_list = json.loads(event['body'])
