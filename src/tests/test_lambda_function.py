@@ -1,13 +1,15 @@
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, MagicMock
 import json
 from lambda_function import lambda_handler
 
 class TestLambdaHandler(unittest.TestCase):
 
-    @patch('lambda_function.model.predict')
-    def test_lambda_handler_success(self, mock_predict):
-        mock_predict.return_value = [5.0]
+    @patch('lambda_function.joblib.load')
+    def test_lambda_handler_success(self, mock_joblib_load):
+        mock_model = MagicMock()
+        mock_model.predict.return_value = [5.0]
+        mock_joblib_load.return_value = mock_model
 
         event = {
             'body': json.dumps([
@@ -33,9 +35,11 @@ class TestLambdaHandler(unittest.TestCase):
         self.assertIn('qualities', body)
         self.assertEqual(body['qualities'], [5.0])
 
-    @patch('lambda_function.model.predict')
-    def test_lambda_handler_exception(self, mock_predict):
-        mock_predict.side_effect = Exception("Test exception")
+    @patch('lambda_function.joblib.load')
+    def test_lambda_handler_exception(self, mock_joblib_load):
+        mock_model = MagicMock()
+        mock_model.predict.side_effect = Exception("Test exception")
+        mock_joblib_load.return_value = mock_model
 
         event = {
             'body': json.dumps([
