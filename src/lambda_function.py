@@ -1,14 +1,17 @@
 import json
 import joblib
 import numpy as np
-
-model = joblib.load("/var/task/sklearn_model.joblib")
+import os
 
 def lambda_handler(event, context):
     try:
+        # Obtener la ruta del modelo desde una variable de entorno
+        model_path = os.getenv('MODEL_PATH', './sklearn_model.joblib')
+        model = joblib.load(model_path)
+
         # Extraer los parámetros de entrada del evento
         params_list = json.loads(event['body'])
-        
+
         # Verificar que params_list es una lista
         if not isinstance(params_list, list):
             return {
